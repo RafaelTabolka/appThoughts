@@ -63,4 +63,47 @@ module.exports = class ThoughtController{
             res.render('thoughts/home',{thoughts, thoughtsQty, search})
         }).catch((err) => console.error(err))
     }
+
+    static createThought (req, res) {
+        res.render('thoughts/create')
+    }
+
+    static createThoughtSave (req, res) {
+        const thought = {
+            title: req.body.title,
+            UserId: req.session.userId
+        }
+
+        Thought.create(thought)
+        .then(() => {
+            req.flash("message", "Penso, logo existo!")
+            req.session.save(() => {
+                res.redirect("/thoughts/dashboard")
+            })
+        })
+        .catch((err) => console.log(err))
+    }
+
+    static removeThought(req, res) {
+        const id = req.body.id
+
+        Thought.destroy({where:{id:id}})
+        .then(() => {
+            req.flash("message", "Pensamento Excluído")
+            req.session.save(() => {
+                res.redirect("/thoughts/dashboard")
+            })
+        })
+        .catch((err) => console.log(err))
+    }
+
+    static updateThought(req, res) {
+        const id = req.param.id
+
+        Thought.findOne({where: {id:id}, raw: true})
+        .then((thought) => {
+            res.reader("thoughts/edit", {thought})
+        })
+        .catch((err) => console.log(err))
+    }
 }

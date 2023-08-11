@@ -38,7 +38,7 @@ module.exports = class UserController {
     req.flash('message', 'Login realizado com sucesso!')
 
     req.session.save(() => {
-      res.redirect('/')
+      res.redirect('/login')
     })
   }
 
